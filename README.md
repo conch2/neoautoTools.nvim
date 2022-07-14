@@ -1,1 +1,1 @@
-# neoauto.nvim
+# neoautoTools.nvim
