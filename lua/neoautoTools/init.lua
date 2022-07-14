@@ -9,8 +9,6 @@ local function setmapping()
             {noremap=true, silent=true})
 end
 
-require()
-
 function M.package()
     vim.cmd("normal <ESC>")
 end
