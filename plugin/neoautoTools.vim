@@ -1,11 +1,11 @@
 
-if exists('g:loaded_conch_neoauto')
-    finish
-endif
+#if exists('g:loaded_conch_neoauto')
+#    finish
+#endif
 
-command! NeoAutoTAB lua print('NeoAutoTAB')
+#command! NeoAutoTAB lua print('NeoAutoTAB')
 
-echo 'plugin init'
+#echo 'plugin init'
 
-let g:loaded_conch_neoauto=1
+#let g:loaded_conch_neoauto=1
 
