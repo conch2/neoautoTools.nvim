@@ -4,26 +4,37 @@ local M = {}
 local vf = vim.fn
 local utils = require("neoautoTools.utils")
 
-local function setmapping()
+local function setmapping(mapping)
+    if mapping == nil then
+        mapping = {}
+    end
     -- 符号包裹
-    vim.api.nvim_set_keymap("v", "<C-l>",
-            "<CMD>lua require('neoautoTools').package()<CR>",
-            {noremap=true, silent=true})
-    vim.api.nvim_set_keymap("n", "",
-            "<CMD>lua require('neoautoTools').commentOnce()<CR>",
-            {noremap=true, silent=true})
-    vim.api.nvim_set_keymap("i", "",
-            "<CMD>lua require('neoautoTools').commentOnce()<CR>",
-            {noremap=true, silent=true})
-    vim.api.nvim_set_keymap("v", "",
-            "<CMD>lua require('neoautoTools').comment()<CR>",
-            {noremap=true, silent=true})
-    vim.api.nvim_set_keymap("v", "<TAB>",
-            "><CR>gv",
-            {noremap=true, silent=true})
-    vim.api.nvim_set_keymap("v", "-<TAB>",
-            "<<CR>gv",
-            {noremap=true, silent=true})
+    if mapping.range_package ~= nil then
+        vim.api.nvim_set_keymap("v", mapping.range_package,
+                "<CMD>lua require('neoautoTools').package()<CR>",
+                {noremap=true, silent=true})
+    end
+    if mapping.comment ~= nil then
+        vim.api.nvim_set_keymap("n", mapping.comment,
+                "<CMD>lua require('neoautoTools').commentOnce()<CR>",
+                {noremap=true, silent=true})
+        vim.api.nvim_set_keymap("i", mapping.comment,
+                "<CMD>lua require('neoautoTools').commentOnce()<CR>",
+                {noremap=true, silent=true})
+        vim.api.nvim_set_keymap("v", mapping.comment,
+                "<CMD>lua require('neoautoTools').comment()<CR>",
+                {noremap=true, silent=true})
+    end
+    if mapping.neo_tab ~= nil then
+        vim.api.nvim_set_keymap("v", mapping.neo_tab,
+                "><CR>gv",
+                {noremap=true, silent=true})
+    end
+    if mapping.neo_sub_tab ~= nil then
+        vim.api.nvim_set_keymap("v", mapping.neo_sub_tab,
+                "<<CR>gv",
+                {noremap=true, silent=true})
+    end
 end
 
 M.chmap = {}
@@ -108,6 +119,7 @@ end
 
 M.bufs = {}
 
+-- 为每一个buffer设置配置
 local function registerBuffer(buf)
     local fileLocation = vim.api.nvim_buf_get_name(buf)
     local gpos = utils.find_last_of(fileLocation, "/", true)
@@ -138,6 +150,7 @@ M.suffixsComment["h"] = "//"
 M.suffixsComment["cpp"] = "//"
 M.suffixsComment["hpp"] = "//"
 M.suffixsComment["java"] = "//"
+M.suffixsComment["py"] = "#"
 M.suffixsComment["sh"] = "#"
 M.suffixsComment["vim"] = '"'
 M.suffixsComment["lua"] = "--"
@@ -252,7 +265,7 @@ function M.setup(attr)
     if attr == nil then
         attr = {}
     end
-    setmapping()
+    setmapping(attr.mapping)
     if attr.chmap ~= nil then
         M.chmap = attr.chmap
     end
@@ -262,10 +275,15 @@ function M.setup(attr)
         end
     end
     M.packageEndEvent = attr.packageEndEvent
-    if attr.appendCommentCh == nil then
+    if attr.append_comment_char == nil then
         M.appendCommentCh = ""
     else
-        M.appendCommentCh = attr.appendCommentCh
+        M.appendCommentCh = attr.append_comment_char
+    end
+    if attr.add_suffixs_comment ~= nil then
+        for k, v in pairs(attr.add_suffixs_comment) do
+            M.suffixsComment[k] = v
+        end
     end
 end
 
